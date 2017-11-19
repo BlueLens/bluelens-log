@@ -9,17 +9,19 @@ import redis
 REDIS_LIST_KEY = 'logstash'
 
 class Logging(object):
-  def __init__(self, options, stdout=True):
+  def __init__(self, options, tag=None, stdout=True):
     self.redis_server = options['REDIS_SERVER']
     self.redis_password = options['REDIS_PASSWORD']
     # self.elk_server = options['ELK_SERVER']
     # self.elk_password = options['ELK_PASSWORD']
     self.rconn = redis.StrictRedis(self.redis_server, port=6379, password=self.redis_password)
     self.stdout = stdout
+    self.tag = tag
 
   def log(self, level, message):
     msg = {}
     msg['level'] = level
+    msg['tag'] = self.tag
     msg['message'] = message
     if self.stdout:
       print(level + ':' + str(message))
